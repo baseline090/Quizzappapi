@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
-
+const jwt = require('jsonwebtoken');
 
 const Admin = require('../models/Admin')
 
@@ -57,12 +57,24 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    return res.status(200).json({ message: 'Login successful!' });
+    // Create JWT payload
+    const payload = {
+      userId: user._id, // Include user ID in the payload
+      fullName: user.fullName,
+    };
+
+    // Sign the token
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }); // Token expires in 1 hour
+
+    return res.status(200).json({ message: 'Login successful!', token }); // Return token to client
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Server error' });
   }
 };
+
+
+
 
 // Send OTP for password reset
 exports.forgotPassword = async (req, res) => {
@@ -129,6 +141,40 @@ exports.resetPassword = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+
+
+
+// Profile Update Controller
+exports.updateProfile = async (req, res) => {
+  const { firstName, lastName, username, email, phoneNumber } = req.body; // Include all fields you want to update
+  const userId = req.user.userId;  // Extract user ID from the JWT token
+
+  try {
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update user's profile information
+    if (firstName) user.firstName = firstName;
+    if (lastName) user.lastName = lastName;
+    if (username) user.username = username;
+    if (email) user.email = email;
+    if (phoneNumber) user.phoneNumber = phoneNumber;
+
+    // Save the updated user
+    await user.save();
+
+    res.json({ message: 'Profile updated successfully', user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 
 
 
