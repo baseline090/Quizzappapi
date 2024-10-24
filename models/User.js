@@ -2,12 +2,15 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
-    fullName: { type: String, required: true },
+    firstName: { type: String, default: "" }, // Optional during registration
+    lastName: { type: String, default: "" },  // Optional during registration
     username: { type: String, required: true },
     email: { type: String, required: true, unique: true, match: /.+\@.+\..+/ }, // Regex for email validation
     password: { type: String, required: true },
-    otp: { type: String, default: null } // Field for storing OTP
+    otp: { type: String, default: null }, // Field for storing OTP
+    phoneNumber: { type: String, default: null } // Optional during registration
 });
+
 
 // Hash password before saving
 userSchema.pre('save', async function (next) {
