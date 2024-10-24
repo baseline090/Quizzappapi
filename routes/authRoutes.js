@@ -50,7 +50,6 @@ module.exports = router;
 ///////---------------------------------------/////////////////
 
 //////--------------Dahboard Routes-----------------------//////
-
 // User Dashboard Route (protected)
 router.get('/dashboard', auth, (req, res) => {
     res.status(200).json({
@@ -63,9 +62,7 @@ router.get('/dashboard', auth, (req, res) => {
 router.put('/profile/update', auth, updateProfile);
 
 
-
 ///--------------- Admin Routes-----------------------/////////
-
 // Admin Registration Route
 router.post('/admin/register',
     [
@@ -101,8 +98,6 @@ router.delete('/admin/user/delete',
     deleteUserById
 );
 //////---------------------------------------------------------------------/////////
-
-
 module.exports = router;
 
 
