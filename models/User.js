@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
+    fullName: { type: String, required: true },
     firstName: { type: String, default: "" }, // Optional during registration
     lastName: { type: String, default: "" },  // Optional during registration
     username: { type: String, required: true },
