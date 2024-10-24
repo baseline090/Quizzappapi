@@ -327,12 +327,6 @@ exports.login = async (req, res) => {
 
 
 
-
-
-
-
-
-
 // Send OTP for password reset
 exports.forgotPassword = async (req, res) => {
   const { email } = req.body;
