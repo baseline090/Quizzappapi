@@ -81,20 +81,33 @@ exports.login = async (req, res) => {
 
 /////logut api controller
 
+// exports.logout = (req, res) => {
+//   const token = req.header('Authorization')?.replace('Bearer ', '');
+
+//   if (!token) {
+//     return res.status(400).json({ message: 'Token not provided' });
+//   }
+
+//   // Add token to the blacklist
+//   tokenBlacklist.addToken(token);
+
+//   res.status(200).json({ message: 'User successfully logged out' });
+// };
+
+
+// Logout API controller
 exports.logout = (req, res) => {
-  const token = req.header('Authorization')?.replace('Bearer ', '');
+    const token = req.header('Authorization')?.replace('Bearer ', '');
 
-  if (!token) {
-    return res.status(400).json({ message: 'Token not provided' });
-  }
+    if (!token) {
+        return res.status(400).json({ message: 'Token not provided' });
+    }
 
-  // Add token to the blacklist
-  tokenBlacklist.addToken(token);
+    // Add token to the blacklist
+    tokenBlacklist.addToken(token);
 
-  res.status(200).json({ message: 'User successfully logged out' });
+    res.status(200).json({ message: 'User successfully logged out' });
 };
-
-
 
 
 
