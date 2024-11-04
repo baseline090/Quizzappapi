@@ -121,6 +121,7 @@ router.get('/admin/dashboard', auth, adminController.accessDashboard);
 // Admin Routes for get all User (Protected)
 router.get('/admin/users', auth, adminController.getAllUsers);
 
+
 //Admin Routes Delete a user (Protected)
 router.delete('/admin/user/delete', auth, adminController.deleteUser);
 
