@@ -122,7 +122,7 @@ router.get('/admin/dashboard', auth, adminController.accessDashboard);
 router.get('/admin/users', auth, adminController.getAllUsers);
 
 //Admin Routes Delete a user (Protected)
-router.delete('/admin/user', auth, adminController.deleteUser);
+router.delete('/admin/user/delete', auth, adminController.deleteUser);
 
 // Admin Routes get all Category Management (Protected)
 router.get('/admin/category', auth, adminController.getAllCategories);
