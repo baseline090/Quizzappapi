@@ -202,7 +202,7 @@ exports.updateProfile = async (req, res) => {
 ///get all the category
 exports.getAllCategories = async (req, res) => {
   try {
-    const categories = await Category.find(); // Assuming Category is your Mongoose model
+    const categories = await Category.find(); 
     res.status(200).json(categories);
   } catch (error) {
     console.error('Error fetching categories:', error);
