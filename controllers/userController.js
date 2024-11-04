@@ -76,7 +76,7 @@ exports.login = async (req, res) => {
 };
 
 
-/////lout api controller
+/////logut api controller
 
 exports.logout = (req, res) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
