@@ -2,6 +2,9 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
+const tokenBlacklist = require('../utils/tokenBlacklist');
+const Category = require('../models/Category');
+
 
 const Admin = require('../models/Admin')
 
@@ -191,6 +194,19 @@ exports.updateProfile = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+
+///get all the category
+exports.getAllCategories = async (req, res) => {
+  try {
+    const categories = await Category.find(); // Assuming Category is your Mongoose model
+    res.status(200).json(categories);
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    res.status(500).json({ message: 'Server error while fetching categories' });
   }
 };
 
