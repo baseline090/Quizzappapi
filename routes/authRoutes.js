@@ -12,7 +12,7 @@ const {
     getAllCategories
 } = require('../controllers/userController');
 
-const adminController = require('../controllers/adminController');
+// const adminController = require('../controllers/adminController');
 
 const router = express.Router();
 
@@ -94,38 +94,38 @@ router.get('/dashboard', auth, async (req, res) => {
 ///---------------------------- Admin Routes----------------------------------------------------/////////
 
 // Admin Registration Route
-router.post('/admin/register', [
-    body('email').isEmail().withMessage('Email is invalid'),
-    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
-    body('confirmPassword').exists().withMessage('Please confirm your password')
-], adminController.registerAdmin);  //adminRegister
+// router.post('/admin/register', [
+//     body('email').isEmail().withMessage('Email is invalid'),
+//     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+//     body('confirmPassword').exists().withMessage('Please confirm your password')
+// ], adminController.registerAdmin);  //adminRegister
 
-// Admin Login Route
-router.post('/admin/login', [
-    body('email').isEmail().withMessage('Email is invalid'),
-    body('password').notEmpty().withMessage('Password is required')
-], adminController.loginAdmin);
+// // Admin Login Route
+// router.post('/admin/login', [
+//     body('email').isEmail().withMessage('Email is invalid'),
+//     body('password').notEmpty().withMessage('Password is required')
+// ], adminController.loginAdmin);
 
-// Admin Dashboard Route (Protected)
-router.get('/admin/dashboard', auth, adminController.accessDashboard);
+// // Admin Dashboard Route (Protected)
+// router.get('/admin/dashboard', auth, adminController.accessDashboard);
 
-// Admin Routes for get all User (Protected)
-router.get('/admin/users', auth, adminController.getAllUsers);
+// // Admin Routes for get all User (Protected)
+// router.get('/admin/users', auth, adminController.getAllUsers);
 
-//Admin Routes Delete a user (Protected)
-router.delete('/admin/user', auth, adminController.deleteUser);
+// //Admin Routes Delete a user (Protected)
+// router.delete('/admin/user', auth, adminController.deleteUser);
 
-// Admin Routes get all Category Management (Protected)
-router.get('/admin/category', auth, adminController.getAllCategories);
+// // Admin Routes get all Category Management (Protected)
+// router.get('/admin/category', auth, adminController.getAllCategories);
 
-// Admin Routes add Category Management (Protected)
-router.post('/admin/category/add', auth, adminController.addCategory);
+// // Admin Routes add Category Management (Protected)
+// router.post('/admin/category/add', auth, adminController.addCategory);
 
-//Admin Routes Delete a category
-router.delete('/admin/category/delete', auth, adminController.deleteCategory);
+// //Admin Routes Delete a category
+// router.delete('/admin/category/delete', auth, adminController.deleteCategory);
 
-// Route for admin logout
-router.post('/admin/logout', auth, adminController.adminLogout);
+// // Route for admin logout
+// router.post('/admin/logout', auth, adminController.adminLogout);
 
 ///////////----------------------------------------------------------------------------/////////
 
