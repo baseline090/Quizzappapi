@@ -7,7 +7,9 @@ const {
     forgotPassword,
     verifyOtp,
     resetPassword,
-    updateProfile
+    updateProfile,
+    logout,
+    getAllCategories
 } = require('../controllers/userController');
 
 const {
@@ -20,6 +22,8 @@ const {
 const router = express.Router();
 
 const auth = require('../middleware/auth');
+
+const Category = require('../models/Category'); // Import the Category model
 
 
 //-----------User Routes----------------------------------------------------------------------------------
@@ -45,6 +49,19 @@ router.post('/verifyotp', verifyOtp);
 
 // Route for resetting password
 router.post('/resetpassword', resetPassword);
+
+// Route for updating user profile (Protected route)
+router.put('/profile/update', auth, updateProfile);
+
+
+// Protected route for users to get all categories
+router.get('/user/categories', auth, getAllCategories);
+
+
+// Logout route (protected)
+router.post('/logout', auth, logout);
+
+
 
 module.exports = router;
 ///////---------------------------------------/////////////////
