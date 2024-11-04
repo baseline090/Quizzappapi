@@ -76,7 +76,20 @@ exports.login = async (req, res) => {
 };
 
 
+/////lout api controller
 
+exports.logout = (req, res) => {
+  const token = req.header('Authorization')?.replace('Bearer ', '');
+
+  if (!token) {
+    return res.status(400).json({ message: 'Token not provided' });
+  }
+
+  // Add token to the blacklist
+  tokenBlacklist.addToken(token);
+
+  res.status(200).json({ message: 'User successfully logged out' });
+};
 
 
 
