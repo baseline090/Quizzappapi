@@ -6,7 +6,7 @@ const tokenBlacklist = require('../utils/tokenBlacklist');
 const Category = require('../models/Category');
 
 
-const Admin = require('../models/Admin')
+
 
 // Register a new user
 exports.register = async (req, res) => {
