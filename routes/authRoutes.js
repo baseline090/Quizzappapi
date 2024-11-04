@@ -12,12 +12,7 @@ const {
     getAllCategories
 } = require('../controllers/userController');
 
-const {
-    adminRegister,
-    adminLogin,
-    getAllUsers,
-    deleteUserById
-} = require('../controllers/adminController');
+const adminController = require('../controllers/adminController');
 
 const router = express.Router();
 
@@ -62,59 +57,79 @@ router.get('/user/categories', auth, getAllCategories);
 router.post('/logout', auth, logout);
 
 
+///////-------------------------------------------------------------------/////////////////
 
-module.exports = router;
-///////---------------------------------------/////////////////
 
+
+///////////----------Front End Routes----------------------///
 //////--------------Dahboard Routes-----------------------//////
 // User Dashboard Route (protected)
-router.get('/dashboard', auth, (req, res) => {
-    res.status(200).json({
-        message: 'Welcome to your dashboard!',
-        user: req.user // This should contain user data from the token
-    });
+router.get('/dashboard', auth, async (req, res) => {
+    try {
+        // Fetch user-specific data if needed, using req.user.userId
+
+        const dashboardData = {
+            message: `Welcome, ${req.user.username}! Here are your available actions.`,
+            actions: {
+                viewProfile: '/api/profile',        // Endpoint to view the user's profile details
+                editProfile: '/api/profile/update', // Endpoint to update the user's profile
+                attendQuiz: '/api/quiz/start',      // Placeholder for starting a quiz
+                selectCategory: '/api/category/select', // Placeholder for category selection
+                logout: '/api/logout' // Placeholder for a logout feature, if needed
+            }
+        };
+
+        res.json(dashboardData);
+    } catch (err) {
+        console.error('Error fetching dashboard:', err);
+        res.status(500).json({ message: 'Server error' });
+    }
 });
 
-// Route for updating user profile (Protected route)
-router.put('/profile/update', auth, updateProfile);
+
+//////////----------------------------------------------------------------------////////////////////////////
 
 
-///--------------- Admin Routes-----------------------/////////
+
+///---------------------------- Admin Routes----------------------------------------------------/////////
+
 // Admin Registration Route
-router.post('/admin/register',
-    [
-        body('email').isEmail().withMessage('Please enter a valid email'),
-        body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
-        body('confirmPassword').custom((value, { req }) => {
-            if (value !== req.body.password) {
-                throw new Error('Passwords do not match');
-            }
-            return true;
-        })
-    ],
-    adminRegister
-);
+router.post('/admin/register', [
+    body('email').isEmail().withMessage('Email is invalid'),
+    body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+    body('confirmPassword').exists().withMessage('Please confirm your password')
+], adminController.registerAdmin);  //adminRegister
 
 // Admin Login Route
-router.post('/admin/login',
-    [
-        body('email').isEmail().withMessage('Please enter a valid email'),
-        body('password').notEmpty().withMessage('Password is required')
-    ],
-    adminLogin
-);
+router.post('/admin/login', [
+    body('email').isEmail().withMessage('Email is invalid'),
+    body('password').notEmpty().withMessage('Password is required')
+], adminController.loginAdmin);
 
-// Get all users Route
-router.get('/admin/users', getAllUsers);
+// Admin Dashboard Route (Protected)
+router.get('/admin/dashboard', auth, adminController.accessDashboard);
 
-// Delete user by ID Route
-router.delete('/admin/user/delete',
-    [
-        body('id').notEmpty().withMessage('User ID is required')
-    ],
-    deleteUserById
-);
-//////---------------------------------------------------------------------/////////
+// Admin Routes for get all User (Protected)
+router.get('/admin/users', auth, adminController.getAllUsers);
+
+//Admin Routes Delete a user (Protected)
+router.delete('/admin/user', auth, adminController.deleteUser);
+
+// Admin Routes get all Category Management (Protected)
+router.get('/admin/category', auth, adminController.getAllCategories);
+
+// Admin Routes add Category Management (Protected)
+router.post('/admin/category/add', auth, adminController.addCategory);
+
+//Admin Routes Delete a category
+router.delete('/admin/category/delete', auth, adminController.deleteCategory);
+
+// Route for admin logout
+router.post('/admin/logout', auth, adminController.adminLogout);
+
+///////////----------------------------------------------------------------------------/////////
+
+
 module.exports = router;
 
 
