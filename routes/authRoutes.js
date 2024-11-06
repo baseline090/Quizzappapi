@@ -69,8 +69,12 @@ router.post('/verifyotp', verifyOtp);
 router.post('/resetpassword', resetPassword);
 
 
+// // Route for updating user profile (Protected route)
+// router.put('/profile/update', auth, updateProfile);
+
 // Route for updating user profile (Protected route)
-router.put('/profile/update', auth, updateProfile);
+router.put('/profile/update', auth, upload.single('profilePic'), updateProfile);
+
 
 
 // Protected route for users to get all categories
