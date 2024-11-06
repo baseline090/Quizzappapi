@@ -13,6 +13,7 @@ connectDB();
 // Middleware
 app.use(express.json());
 app.use(cors());
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api', authRoutes); // Handles login, registration, and profile updates
