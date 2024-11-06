@@ -54,6 +54,15 @@
 // };
 
 
+
+// const tokenBlacklist = new Set();
+
+// module.exports = {
+//   addToken: (token) => tokenBlacklist.add(token),
+//   isTokenBlacklisted: (token) => tokenBlacklist.has(token),
+// };
+
+
 const tokenBlacklist = new Map();
 
 module.exports = {
@@ -90,8 +99,6 @@ module.exports = {
 setInterval(() => {
   module.exports.cleanupExpiredTokens();
 }, 60 * 60 * 1000); // Run cleanup every hour
-
-
 
 
 
