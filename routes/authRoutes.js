@@ -18,7 +18,31 @@ const router = express.Router();
 
 const auth = require('../middleware/auth');
 
+const multer = require('multer');
+
 const Category = require('../models/Category'); // Import the Category model
+
+////-------------------------storeage handler------------------/////////
+
+// Set up multer to handle image upload
+const storage = multer.memoryStorage();
+// const upload = multer({ storage: storage });
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 2 * 1024 * 1024 }, // Limit to 2 MB
+    fileFilter: (req, file, cb) => {
+        // Check file type (optional, for example to allow only images)
+        if (!file.mimetype.startsWith('image/')) {
+            return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+    },
+});
+
+
+
+
+
 
 //-----------User Routes----------------------------------------------------------------------------------
 // Register Route with Validation
