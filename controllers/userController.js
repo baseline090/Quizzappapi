@@ -164,25 +164,65 @@ exports.resetPassword = async (req, res) => {
 };
 
 
+// // Profile Update Controller
+// exports.updateProfile = async (req, res) => {
+//   const { firstName, lastName, username, email, phoneNumber } = req.body; // Include all fields you want to update
+//   const userId = req.user.userId;  // Extract user ID from the JWT token
+
+//   try {
+//     // Find the user by ID    
+//     const user = await User.findById(userId);
+
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found' });
+//     }
+
+//     // Update user's profile information
+//     if (firstName) user.firstName = firstName;
+//     if (lastName) user.lastName = lastName;
+//     if (username) user.username = username;
+//     if (email) user.email = email;
+//     if (phoneNumber) user.phoneNumber = phoneNumber;
+
+//     // Save the updated user
+//     await user.save();
+
+//     res.json({ message: 'Profile updated successfully', user });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// };
+
 // Profile Update Controller
 exports.updateProfile = async (req, res) => {
-  const { firstName, lastName, username, email, phoneNumber } = req.body; // Include all fields you want to update
-  const userId = req.user.userId;  // Extract user ID from the JWT token
+  const { firstName, lastName, username, email, phoneNumber } = req.body;
+  const userId = req.user.userId;
 
   try {
-    // Find the user by ID    
+    // Check for file size error
+    if (req.fileValidationError) {
+      return res.status(400).json({ message: req.fileValidationError });
+    }
+
+    // Find the user by ID
     const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Update user's profile information
+    // Update profile details
     if (firstName) user.firstName = firstName;
     if (lastName) user.lastName = lastName;
     if (username) user.username = username;
     if (email) user.email = email;
     if (phoneNumber) user.phoneNumber = phoneNumber;
+
+    // Update profile picture if provided
+    if (req.file) {
+      user.profilePic = req.file.buffer; // Store as buffer in MongoDB
+    }
 
     // Save the updated user
     await user.save();
@@ -190,9 +230,15 @@ exports.updateProfile = async (req, res) => {
     res.json({ message: 'Profile updated successfully', user });
   } catch (err) {
     console.error(err);
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ message: 'File size is too large. Maximum size is 2MB.' });
+    }
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+
+
 
 
 ///get all the category
