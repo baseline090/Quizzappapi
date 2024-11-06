@@ -9,8 +9,9 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true, match: /.+\@.+\..+/ }, // Regex for email validation
     password: { type: String, required: true },
     otp: { type: String, default: null }, // Field for storing OTP
-    phoneNumber: { type: String, default: null } // Optional during registration
-});
+    phoneNumber: { type: String, default: null }, // Optional during registration
+    profilePic: { type: Buffer }// Optional during registration
+}, { timestamps: true });
 
 
 // Hash password before saving
