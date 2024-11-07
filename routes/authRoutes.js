@@ -10,7 +10,8 @@ const {
     resetPassword,
     updateProfile,
     logout,
-    getAllCategories
+    getAllCategories,
+    getUserProfile
 } = require('../controllers/userController');
 
 
@@ -71,6 +72,9 @@ router.put('/profile/update', auth, upload.single('profilePic'), updateProfile);
 
 // Protected route for users to get all categories
 router.get('/user/categories', auth, getAllCategories);
+
+// Route to get the logged-in user's profile
+router.get('/user/profile', auth, getUserProfile);  // Protected route using the auth middleware
 
 
 // Logout route (protected)
