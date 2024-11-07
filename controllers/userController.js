@@ -270,6 +270,7 @@ exports.getUserProfile = async (req, res) => {
       profile: {
         // firstName: user.firstName,
         // lastName: user.lastName,
+        username: user.username,
         email: user.email,
         phoneNumber: user.phoneNumber,
         profilePic: base64ProfilePic  // Send the Base64 string
