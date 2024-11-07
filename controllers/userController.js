@@ -268,8 +268,8 @@ exports.getUserProfile = async (req, res) => {
     res.json({
       message: 'User profile fetched successfully',
       profile: {
-        firstName: user.firstName,
-        lastName: user.lastName,
+        // firstName: user.firstName,
+        // lastName: user.lastName,
         email: user.email,
         phoneNumber: user.phoneNumber,
         profilePic: base64ProfilePic  // Send the Base64 string
