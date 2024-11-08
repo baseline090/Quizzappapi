@@ -361,7 +361,6 @@ exports.updateProfile = async (req, res) => {
 
 
 
-
 // // Controller to fetch user profile
 // exports.getUserProfile = async (req, res) => {
 //   const userId = req.user.userId;  // Extract user ID from the token
