@@ -57,7 +57,8 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email })
+    const user = await User.findOne({ email }).select("username _id fullName username email password");
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
@@ -68,9 +69,16 @@ exports.login = async (req, res) => {
     }
 
     // Create JWT payload
+    // const payload = {
+    //   userId: user._id, // Include user ID in the payload
+    //   fullName: user.fullName,
+    // };
+
     const payload = {
       userId: user._id, // Include user ID in the payload
       fullName: user.fullName,
+      username: user.username,
+      email: user.email
     };
 
     // Sign the token with a 24-hour expiration
@@ -268,8 +276,9 @@ exports.getUserProfile = async (req, res) => {
     res.json({
       message: 'User profile fetched successfully',
       profile: {
-        // firstName: user.firstName,
-        // lastName: user.lastName,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        fullName: user.fullName,
         username: user.username,
         email: user.email,
         phoneNumber: user.phoneNumber,
