@@ -71,6 +71,10 @@ app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
+//base Rotes for message 
+app.get('/',(req,res)=>{
+    res.status(200).json({ msg:"Basepath",code:200})
+})
 
 // Routes
 app.use('/api', authRoutes); // Handles login, registration, and profile updates
