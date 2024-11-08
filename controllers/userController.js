@@ -46,7 +46,45 @@ exports.register = async (req, res) => {
 
 
 
+// //login controller
+// exports.login = async (req, res) => {
+//   const errors = validationResult(req);
+//   if (!errors.isEmpty()) {
+//     return res.status(400).json({ errors: errors.array() });
+//   }
 
+//   const { email, password } = req.body;
+
+//   try {
+//     const user = await User.findOne({ email });
+//     if (!user) {
+//       return res.status(400).json({ message: 'Invalid credentials' });
+//     }
+
+//     const isMatch = await bcrypt.compare(password, user.password);
+//     if (!isMatch) {
+//       return res.status(400).json({ message: 'Invalid credentials' });
+//     }
+
+//     // Create JWT payload
+//     const payload = {
+//       userId: user._id, // Include user ID in the payload
+//       fullName: user.fullName,
+//     };
+
+//     // Sign the token with a 24-hour expiration
+//     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '24h' });
+
+//     return res.status(200).json({ message: 'Login successful!', token }); // Return token to client
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ message: 'Server error', error });
+//   }
+// };
+
+
+
+// Login a user
 exports.login = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -66,22 +104,33 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Create JWT payload
+    // Create JWT payload with additional details
     const payload = {
-      userId: user._id, // Include user ID in the payload
-      fullName: user.fullName,
+      userId: user._id,          // Include user ID in the payload
+      fullName: user.fullName,   // Include fullName in the payload
+      username: user.username,   // Include username in the payload
+      email: user.email          // Include email in the payload
     };
 
     // Sign the token with a 24-hour expiration
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '24h' });
 
-    return res.status(200).json({ message: 'Login successful!', token }); // Return token to client
+    // Respond with token and additional user data
+    return res.status(200).json({
+      message: 'Login successful!',
+      token,
+      data: {
+        userId: user._id,
+        fullName: user.fullName,
+        username: user.username,
+        email: user.email
+      }
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Server error', error });
   }
 };
-
 
 
 
