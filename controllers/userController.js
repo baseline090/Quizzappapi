@@ -47,7 +47,6 @@ exports.register = async (req, res) => {
 
 
 
-// Login a user
 exports.login = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -57,8 +56,7 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email })
-    const user = await User.findOne({ email }).select("username _id fullName");
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
@@ -69,16 +67,9 @@ exports.login = async (req, res) => {
     }
 
     // Create JWT payload
-    // const payload = {
-    //   userId: user._id, // Include user ID in the payload
-    //   fullName: user.fullName,
-    // };
-
     const payload = {
       userId: user._id, // Include user ID in the payload
       fullName: user.fullName,
-      // username: user.username,
-      // email: user.email
     };
 
     // Sign the token with a 24-hour expiration
@@ -90,49 +81,6 @@ exports.login = async (req, res) => {
     return res.status(500).json({ message: 'Server error', error });
   }
 };
-
-
-
-
-// // Login a user
-// exports.login = async (req, res) => {
-//   const errors = validationResult(req);
-//   if (!errors.isEmpty()) {
-//     return res.status(400).json({ errors: errors.array() });
-//   }
-
-//   const { email, password } = req.body;
-
-//   try {
-//     const user = await User.findOne({ email }).select("username _id fullName username email password");
-//     console.log(user)
-//     if (!user) {
-//       return res.status(400).json({ message: 'Invalid credentials' });
-//     }
-
-//     const isMatch = await bcrypt.compare(password, user.password);
-//     if (!isMatch) {
-//       return res.status(400).json({ message: 'Invalid credentials' });
-//     }
-
-//     // Create JWT payload
-//     const payload = {
-//       userId: user._id, // Include user ID in the payload
-//       fullName: user.fullName,
-//       username: user.username,
-//       email: user.email
-//     };
-
-//     // Sign the token with a 24-hour expiration
-//     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '24h' });
-
-//     return res.status(200).json({ message: 'Login successful!', token, data: payload }); // Return token to client
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ message: 'Server error', error });
-//   }
-// };
-
 
 
 
@@ -361,50 +309,15 @@ exports.updateProfile = async (req, res) => {
     if (email) user.email = email;
     if (phoneNumber) user.phoneNumber = phoneNumber;
 
-
-    // Update full name when first name or last name is changed
-    if (firstName || lastName) {
-      user.fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
-    }
-
-
-
-
     // Update profile picture if provided
     if (req.file) {
       user.profilePic = req.file.buffer; // Store as buffer in MongoDB
     }
 
-
-
-
-
     // Save the updated user
     await user.save();
 
-    //     res.json({ message: 'Profile updated successfully', user });
-    //   } catch (err) {
-    //     console.error(err);
-    //     if (err.code === 'LIMIT_FILE_SIZE') {
-    //       return res.status(400).json({ message: 'File size is too large. Maximum size is 2MB.' });
-    //     }
-    //     res.status(500).json({ message: 'Server error' });
-    //   }
-    // };
-
-    // Send response with updated user details
-    res.json({
-      message: 'Profile updated successfully',
-      user: {
-        firstName: user.firstName,
-        lastName: user.lastName,
-        fullName: user.fullName,
-        username: user.username,
-        email: user.email,
-        phoneNumber: user.phoneNumber,
-        profilePic: user.profilePic, // Send profile pic buffer if required
-      },
-    });
+    res.json({ message: 'Profile updated successfully', user });
   } catch (err) {
     console.error(err);
     if (err.code === 'LIMIT_FILE_SIZE') {
@@ -413,6 +326,43 @@ exports.updateProfile = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+
+// Controller to fetch user profile
+exports.getUserProfile = async (req, res) => {
+  const userId = req.user.userId;  // Extract user ID from the token
+
+  try {
+    // Fetch the user from the database by user ID
+    const user = await User.findById(userId).select('-password'); // Exclude password from result
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Convert the buffer data (profilePic) to Base64 string if it exists
+    const base64ProfilePic = user.profilePic ? user.profilePic.toString('base64') : null;
+
+    // Send the user profile details, including the Base64 profile picture
+    res.json({
+      message: 'User profile fetched successfully',
+      profile: {
+        // firstName: user.firstName,
+        // lastName: user.lastName,
+        username: user.username,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        profilePic: base64ProfilePic  // Send the Base64 string
+      }
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
 
 
 
@@ -431,6 +381,10 @@ exports.getAllCategories = async (req, res) => {
     res.status(500).json({ message: 'Server error while fetching categories' });
   }
 };
+
+
+
+
 
 
 
