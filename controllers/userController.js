@@ -462,6 +462,9 @@ exports.getUserProfile = async (req, res) => {
       profile: {
         // firstName: user.firstName,
         // lastName: user.lastName,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        fullName: user.fullName,
         username: user.username,
         email: user.email,
         phoneNumber: user.phoneNumber,
