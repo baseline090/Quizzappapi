@@ -257,37 +257,116 @@ exports.updateProfile = async (req, res) => {
 };
 
 
-// Controller to fetch user profile
-exports.getUserProfile = async (req, res) => {
-  const userId = req.user.userId;  // Extract user ID from the token
+// // Controller to fetch user profile
+// exports.getUserProfile = async (req, res) => {
+//   const userId = req.user.userId;  // Extract user ID from the token
+
+//   try {
+//     // Fetch the user from the database by user ID
+//     const user = await User.findById(userId).select('-password'); // Exclude password from result
+
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found' });
+//     }
+
+//     // Convert the buffer data (profilePic) to Base64 string if it exists
+//     const base64ProfilePic = user.profilePic ? user.profilePic.toString('base64') : null;
+
+//     // Send the user profile details, including the Base64 profile picture
+//     res.json({
+//       message: 'User profile fetched successfully',
+//       profile: {
+//         firstName: user.firstName,
+//         lastName: user.lastName,
+//         // fullName: user.fullName,
+//         username: user.username,
+//         email: user.email,
+//         phoneNumber: user.phoneNumber,
+//         profilePic: base64ProfilePic  // Send the Base64 string
+//       }
+//     });
+
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// };
+
+
+// Profile Update Controller
+exports.updateProfile = async (req, res) => {
+  const { firstName, lastName, username, email, phoneNumber } = req.body;
+  const userId = req.user.userId;
 
   try {
-    // Fetch the user from the database by user ID
-    const user = await User.findById(userId).select('-password'); // Exclude password from result
+    // Check for file size error
+    if (req.fileValidationError) {
+      return res.status(400).json({ message: req.fileValidationError });
+    }
+
+    // Find the user by ID
+    const user = await User.findById(userId);
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Convert the buffer data (profilePic) to Base64 string if it exists
-    const base64ProfilePic = user.profilePic ? user.profilePic.toString('base64') : null;
+    // Update profile details
+    if (firstName) user.firstName = firstName;
+    if (lastName) user.lastName = lastName;
+    if (username) user.username = username;
+    if (email) user.email = email;
+    if (phoneNumber) user.phoneNumber = phoneNumber;
 
-    // Send the user profile details, including the Base64 profile picture
+
+    // Update full name when first name or last name is changed
+    if (firstName || lastName) {
+      user.fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+    }
+
+
+
+
+    // Update profile picture if provided
+    if (req.file) {
+      user.profilePic = req.file.buffer; // Store as buffer in MongoDB
+    }
+
+
+
+
+
+    // Save the updated user
+    await user.save();
+
+    //     res.json({ message: 'Profile updated successfully', user });
+    //   } catch (err) {
+    //     console.error(err);
+    //     if (err.code === 'LIMIT_FILE_SIZE') {
+    //       return res.status(400).json({ message: 'File size is too large. Maximum size is 2MB.' });
+    //     }
+    //     res.status(500).json({ message: 'Server error' });
+    //   }
+    // };
+
+    // Send response with updated user details
     res.json({
-      message: 'User profile fetched successfully',
-      profile: {
+      message: 'Profile updated successfully',
+      user: {
         firstName: user.firstName,
         lastName: user.lastName,
         fullName: user.fullName,
         username: user.username,
         email: user.email,
         phoneNumber: user.phoneNumber,
-        profilePic: base64ProfilePic  // Send the Base64 string
-      }
+        profilePic: user.profilePic, // Send profile pic buffer if required
+      },
     });
-
   } catch (err) {
     console.error(err);
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ message: 'File size is too large. Maximum size is 2MB.' });
+    }
     res.status(500).json({ message: 'Server error' });
   }
 };
