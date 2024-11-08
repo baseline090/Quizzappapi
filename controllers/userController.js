@@ -47,6 +47,53 @@ exports.register = async (req, res) => {
 
 
 
+// // Login a user
+// exports.login = async (req, res) => {
+//   const errors = validationResult(req);
+//   if (!errors.isEmpty()) {
+//     return res.status(400).json({ errors: errors.array() });
+//   }
+
+//   const { email, password } = req.body;
+
+//   try {
+//     const user = await User.findOne({ email })
+//     const user = await User.findOne({ email }).select("username _id fullName username email password");
+//     if (!user) {
+//       return res.status(400).json({ message: 'Invalid credentials' });
+//     }
+
+//     const isMatch = await bcrypt.compare(password, user.password);
+//     if (!isMatch) {
+//       return res.status(400).json({ message: 'Invalid credentials' });
+//     }
+
+//     // Create JWT payload
+//     // const payload = {
+//     //   userId: user._id, // Include user ID in the payload
+//     //   fullName: user.fullName,
+//     // };
+
+//     const payload = {
+//       userId: user._id, // Include user ID in the payload
+//       fullName: user.fullName,
+//       username: user.username,
+//       email: user.email
+//     };
+
+//     // Sign the token with a 24-hour expiration
+//     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '24h' });
+
+//     return res.status(200).json({ message: 'Login successful!', token }); // Return token to client
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ message: 'Server error', error });
+//   }
+// };
+
+
+
+
 // Login a user
 exports.login = async (req, res) => {
   const errors = validationResult(req);
@@ -57,8 +104,8 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email })
     const user = await User.findOne({ email }).select("username _id fullName username email password");
+    console.log(user)
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
@@ -69,11 +116,6 @@ exports.login = async (req, res) => {
     }
 
     // Create JWT payload
-    // const payload = {
-    //   userId: user._id, // Include user ID in the payload
-    //   fullName: user.fullName,
-    // };
-
     const payload = {
       userId: user._id, // Include user ID in the payload
       fullName: user.fullName,
@@ -84,12 +126,13 @@ exports.login = async (req, res) => {
     // Sign the token with a 24-hour expiration
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '24h' });
 
-    return res.status(200).json({ message: 'Login successful!', token }); // Return token to client
+    return res.status(200).json({ message: 'Login successful!', token, data: payload }); // Return token to client
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Server error', error });
   }
 };
+
 
 
 
