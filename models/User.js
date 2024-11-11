@@ -11,8 +11,9 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     otp: { type: String, default: null }, // Field for storing OTP
     phoneNumber: { type: String, default: null }, // Optional during registration
-    // profilePic: { type: Buffer }// Optional during registration
-    profilePic: { type: Buffer, default: null }// Optional during registration
+    // profilePic: { type: Buffer, default: null }// Optional during registration
+    // profilePic: { type: String, default: null } // Now a Base64-encoded string
+    profilePic: { type: String, default: "" } // Now a Base64-encoded string
 }, { timestamps: true });
 
 
