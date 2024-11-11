@@ -423,6 +423,46 @@ exports.updateProfile = async (req, res) => {
 
 
 
+// // Controller to fetch user profile
+// exports.getUserProfile = async (req, res) => {
+//   const userId = req.user.userId;  // Extract user ID from the token
+
+//   try {
+//     // Fetch the user from the database by user ID
+//     const user = await User.findById(userId).select('-password'); // Exclude password from result
+
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found' });
+//     }
+
+//     // Convert the buffer data (profilePic) to Base64 string if it exists
+//     const base64ProfilePic = user.profilePic ? user.profilePic.toString('base64') : null;
+
+//     // Send the user profile details, including the Base64 profile picture
+//     res.json({
+//       message: 'User profile fetched successfully',
+//       profile: {
+//         // firstName: user.firstName,
+//         // lastName: user.lastName,
+//         firstName: user.firstName,
+//         lastName: user.lastName,
+//         fullName: user.fullName,
+//         username: user.username,
+//         email: user.email,
+//         phoneNumber: user.phoneNumber,
+//         profilePic: base64ProfilePic  // Send the Base64 string
+//       }
+//     });
+
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: 'Server error' });
+//   }
+// };
+
+
+
+
 // Controller to fetch user profile
 exports.getUserProfile = async (req, res) => {
   const userId = req.user.userId;  // Extract user ID from the token
@@ -435,22 +475,20 @@ exports.getUserProfile = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Convert the buffer data (profilePic) to Base64 string if it exists
-    const base64ProfilePic = user.profilePic ? user.profilePic.toString('base64') : null;
+    // If profilePic is a Base64 string already, directly use it
+    const base64ProfilePic = user.profilePic || null;
 
     // Send the user profile details, including the Base64 profile picture
     res.json({
       message: 'User profile fetched successfully',
       profile: {
-        // firstName: user.firstName,
-        // lastName: user.lastName,
         firstName: user.firstName,
         lastName: user.lastName,
         fullName: user.fullName,
         username: user.username,
         email: user.email,
         phoneNumber: user.phoneNumber,
-        profilePic: base64ProfilePic  // Send the Base64 string
+        profilePic: base64ProfilePic  // Send the Base64 string directly
       }
     });
 
